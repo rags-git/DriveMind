@@ -288,6 +288,7 @@ docs/github-repo-setup.md
 - Docker
 - Docker Compose
 - GitHub
+- GitHub Actions
 
 ---
 
@@ -354,6 +355,8 @@ DriveMind/
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   └── feature_request.md
+│   ├── workflows/
+│   │   └── basic-checks.yml
 │   └── pull_request_template.md
 │
 ├── scripts/
@@ -609,6 +612,23 @@ Risk level: critical
 Experience created: true
 Graph memory created: true
 ```
+
+---
+
+## GitHub Actions
+
+DriveMind includes a basic GitHub Actions workflow:
+
+```text
+.github/workflows/basic-checks.yml
+```
+
+The workflow runs on:
+
+- Push to `main`
+- Pull requests to `main`
+
+It checks that important repository files, documentation files, and scripts exist.
 
 ---
 
@@ -936,7 +956,7 @@ docs/checklists/hackathon-final-checklist.md
 Current completion:
 
 ```text
-Approximately 96–97% complete as a hackathon and portfolio MVP.
+Approximately 97–98% complete as a hackathon and portfolio MVP.
 ```
 
 ---
