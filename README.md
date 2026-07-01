@@ -311,7 +311,9 @@ DriveMind/
 │   ├── start-ai-service.sh
 │   ├── start-backend.sh
 │   ├── start-databases.sh
-│   └── start-frontend.sh
+│   ├── start-frontend.sh
+│   ├── test-ai-health.sh
+│   └── test-backend-health.sh
 │
 ├── docker-compose.yml
 ├── README.md
@@ -496,6 +498,22 @@ Frontend runs on:
 
 ```text
 http://localhost:5173
+```
+
+---
+
+## Test Scripts
+
+Test backend health:
+
+```bash
+./scripts/test-backend-health.sh
+```
+
+Test AI service health:
+
+```bash
+./scripts/test-ai-health.sh
 ```
 
 ---
