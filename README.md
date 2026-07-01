@@ -299,6 +299,7 @@ DriveMind/
 │   ├── ml/
 │   ├── presentation/
 │   │   └── hackathon-pitch.md
+│   ├── ROADMAP.md
 │   └── screenshots/
 │       └── dashboard-working.png
 │
@@ -815,6 +816,16 @@ Planned improvements:
 - Add anomaly detection
 - Add route risk prediction
 - Add cloud deployment
+
+---
+
+## Roadmap
+
+The full project roadmap is available here:
+
+```text
+docs/ROADMAP.md
+```
 
 ---
 
