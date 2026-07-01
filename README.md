@@ -313,7 +313,8 @@ DriveMind/
 │   ├── start-databases.sh
 │   ├── start-frontend.sh
 │   ├── test-ai-health.sh
-│   └── test-backend-health.sh
+│   ├── test-backend-health.sh
+│   └── test-risky-telemetry.sh
 │
 ├── docker-compose.yml
 ├── README.md
@@ -515,6 +516,20 @@ Test AI service health:
 ```bash
 ./scripts/test-ai-health.sh
 ```
+
+Test risky telemetry flow:
+
+```bash
+./scripts/test-risky-telemetry.sh
+```
+
+This checks the full backend flow:
+
+- telemetry storage
+- AI intent prediction
+- risk scoring
+- experience creation
+- Neo4j graph memory creation
 
 ---
 
