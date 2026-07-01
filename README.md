@@ -1,227 +1,142 @@
 # DriveMind
 
-DriveMind is a collective vehicle intelligence system that enables vehicles to store, reason, and share driving experiences instead of raw sensor data.
+**Collective Memory and Intent Prediction System for Intelligent Vehicles**
 
-Instead of every vehicle repeating the same road mistake, DriveMind allows vehicles to benefit from previous vehicle experiences.
+DriveMind is an AI-powered intelligent vehicle system that allows vehicles to learn from driving experiences and share useful safety knowledge with other vehicles.
+
+Instead of sharing raw sensor data, DriveMind stores and shares structured driving experiences such as risky turns, sudden braking events, low visibility zones, and near-miss situations.
+
+The project combines:
+
+- Vehicle telemetry simulation
+- AI-based driver/vehicle intent prediction
+- Risk scoring
+- Collective experience memory
+- Real-time alerts
+- Graph-based road knowledge using Neo4j
+- React dashboard for visualization
 
 ---
 
-## Core Idea
+## Project Goal
 
-Traditional vehicle systems share raw data or basic alerts.
+Modern intelligent vehicles usually make decisions using only their own sensors and local environment.
 
-DriveMind shares compressed driving experience such as:
+DriveMind extends this idea by giving vehicles a form of collective memory.
 
-- high-risk road segments
-- weather-specific near misses
-- predicted vehicle intent
-- explainable safety recommendations
-- collective road intelligence graph
+When one vehicle experiences a dangerous situation on a road segment, that experience is stored and can help future vehicles understand risk before they reach the same location.
+
+---
+
+## Key Idea
+
+DriveMind does not simply store raw vehicle data.
+
+It converts driving situations into structured experience memory.
 
 Example:
 
-```text
-Curve-42 has repeated near-miss events during rain.
-Recommended action: reduce speed immediately and increase following distance.
+```json
+{
+  "vehicleId": "vehicle_01",
+  "roadSegmentId": "curve_42",
+  "eventType": "high_risk_driving",
+  "reason": "sudden_braking, sharp_turn_risk, near_miss, bad_weather",
+  "riskScore": 0.9,
+  "recommendedAction": "Immediate braking or avoidance required"
+}
 ```
+
+This experience becomes part of a shared memory system that other vehicles can use.
 
 ---
 
-## Current Project Status
-
-The current MVP includes:
-
-- React dashboard
-- Node.js backend
-- MongoDB telemetry storage
-- MongoDB experience memory
-- Python FastAPI AI service
-- ML-based vehicle intent prediction
-- Risk scoring engine
-- Socket.IO realtime risk alerts
-- Neo4j collective memory graph
-- Graph overview API
-- Docker Compose for MongoDB and Neo4j
-
----
-
-## Tech Stack
-
-### Frontend
-
-```text
-React
-Vite
-Tailwind CSS
-Axios
-Socket.IO Client
-```
-
-### Backend
-
-```text
-Node.js
-Express
-Socket.IO
-MongoDB
-Mongoose
-Neo4j Driver
-Axios
-```
-
-### AI Service
-
-```text
-Python
-FastAPI
-Scikit-learn
-Pandas
-NumPy
-Joblib
-Random Forest Classifier
-```
-
-### Databases
-
-```text
-MongoDB
-Neo4j
-```
-
-### DevOps
-
-```text
-Docker
-Docker Compose
-GitHub
-```
-
----
-
-## System Architecture
-
-```text
-React Dashboard
-        ↓
-Node.js Backend API
-        ↓
-MongoDB
-        ↓
-Python FastAPI AI Service
-        ↓
-Risk Scoring Service
-        ↓
-Experience Memory
-        ↓
-Neo4j Collective Memory Graph
-        ↓
-Socket.IO Realtime Alert
-        ↓
-React Dashboard
-```
-
----
-
-## Main Features
+## Features
 
 ### 1. Vehicle Telemetry Ingestion
 
-Vehicles send telemetry data such as:
+The backend accepts vehicle telemetry such as:
 
-```text
-speed
-acceleration
-brake pressure
-steering angle
-lane offset
-distance to front vehicle
-weather
-road segment
-```
-
-Endpoint:
-
-```http
-POST /api/telemetry
-```
+- Vehicle ID
+- Road segment ID
+- Speed
+- Acceleration
+- Brake pressure
+- Steering angle
+- Lane offset
+- Distance from front vehicle
+- Weather condition
 
 ---
 
 ### 2. AI Intent Prediction
 
-The AI service predicts vehicle intent:
+The AI service predicts the likely intent of the vehicle using telemetry input.
 
-```text
-brake
-accelerate
-turn_left
-turn_right
-lane_change
-normal
-```
+Possible predictions include:
 
-Endpoint:
+- Keep lane
+- Brake
+- Turn
+- Change lane
 
-```http
-POST /predict-intent
-```
+The current model is trained on synthetic simulation data for MVP demonstration.
 
-Example output:
-
-```json
-{
-  "success": true,
-  "predictedIntent": "brake",
-  "confidence": 0.97
-}
-```
+> Note: The current AI model is a prototype trained on synthetic data. It is not claimed to represent real-world vehicle performance. Future versions can use CARLA simulation or real-world trajectory datasets.
 
 ---
 
-### 3. Risk Scoring
+### 3. Risk Scoring Engine
 
-DriveMind calculates risk using:
+The backend calculates a driving risk score based on vehicle behavior and environment.
 
-- high speed
-- sudden braking
-- sharp turn at speed
-- unsafe following distance
-- bad weather
+Risk factors include:
 
-Example output:
+- High speed
+- Sudden braking
+- Sharp steering
+- Close following distance
+- Rain or fog
+- Low visibility
 
-```json
-{
-  "riskScore": 1,
-  "riskLevel": "critical",
-  "recommendedAction": "reduce_speed_immediately_and_increase_following_distance"
-}
-```
+Risk levels:
 
----
-
-### 4. Experience Memory
-
-If risk is high, DriveMind creates an experience memory.
-
-Example:
-
-```json
-{
-  "vehicleId": "vehicle_04",
-  "roadSegmentId": "curve_42",
-  "weather": "rain",
-  "eventType": "high_speed_risk",
-  "riskScore": 1,
-  "confidence": 0.95
-}
-```
+- Low
+- Medium
+- High
+- Critical
 
 ---
 
-### 5. Neo4j Collective Memory Graph
+### 4. Collective Experience Memory
 
-DriveMind stores relationships like:
+If a risky situation is detected, DriveMind stores it as an experience.
+
+Each experience includes:
+
+- Vehicle involved
+- Road segment
+- Weather
+- Event type
+- Risk score
+- Recommended action
+- Reason for risk
+
+---
+
+### 5. Real-Time Risk Alerts
+
+DriveMind uses Socket.IO to send real-time alerts to the dashboard when a high-risk event is detected.
+
+This allows the frontend to immediately show alerts without refreshing the page.
+
+---
+
+### 6. Neo4j Graph Memory
+
+DriveMind stores road experiences as graph relationships.
+
+Example graph structure:
 
 ```text
 Vehicle → EXPERIENCED → Experience
@@ -231,129 +146,160 @@ Experience → TYPE → Event
 Experience → SUGGESTS → Action
 ```
 
-Graph API:
+This makes it possible to analyze relationships between vehicles, roads, weather, and driving risks.
 
-```http
-GET /api/graph
+---
+
+### 7. React Dashboard
+
+The frontend dashboard displays:
+
+- Backend health status
+- Road risk summary
+- Total stored experiences
+- Latest real-time alert
+- Collective memory graph overview
+- Experience memory records
+- Button to simulate risky vehicle telemetry
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- Tailwind CSS
+- Socket.IO Client
+
+### Backend
+
+- Node.js
+- Express.js
+- Socket.IO
+- MongoDB
+- Mongoose
+- Neo4j Driver
+- Axios
+
+### AI Service
+
+- Python
+- FastAPI
+- Scikit-learn
+- Pandas
+- NumPy
+- Joblib
+- Uvicorn
+
+### Databases
+
+- MongoDB
+- Neo4j
+
+### DevOps
+
+- Docker
+- Docker Compose
+- GitHub
+
+---
+
+## Project Structure
+
+```text
+DriveMind/
+│
+├── ai-service/
+│   ├── app/
+│   │   ├── main.py
+│   │   └── train_model.py
+│   ├── data/
+│   │   └── generate_intent_data.py
+│   ├── models/
+│   └── requirements.txt
+│
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── db.js
+│   │   │   └── neo4j.js
+│   │   ├── controllers/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   └── server.js
+│   ├── package.json
+│   └── .env
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── pages/
+│   │   ├── socket/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── docs/
+│   ├── api/
+│   ├── architecture/
+│   ├── db/
+│   └── ml/
+│
+├── scripts/
+│   ├── start-ai-service.sh
+│   ├── start-backend.sh
+│   ├── start-databases.sh
+│   └── start-frontend.sh
+│
+├── docker-compose.yml
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-### 6. Realtime Risk Alerts
-
-When a risky event occurs, Socket.IO emits:
+## System Architecture
 
 ```text
-risk-alert
-```
-
-The frontend dashboard receives and displays the alert immediately.
-
----
-
-## Local Setup
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/rags-git/DriveMind.git
-cd DriveMind
-```
-
----
-
-### 2. Start databases
-
-Make sure Docker Desktop is running.
-
-Then run:
-
-```bash
-docker compose up -d
-```
-
-This starts:
-
-```text
-MongoDB: localhost:27017
-Neo4j Browser: http://localhost:7474
-Neo4j Bolt: bolt://localhost:7687
-```
-
-Neo4j login:
-
-```text
-Username: neo4j
-Password: drivemind123
-```
-
----
-
-### 3. Start AI service
-
-```bash
-cd ai-service
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python data/generate_intent_data.py
-python app/train_model.py
-uvicorn app.main:app --reload --port 8000
-```
-
-AI service runs at:
-
-```text
-http://127.0.0.1:8000
-```
-
----
-
-### 4. Start backend
-
-Open a new terminal:
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Backend runs at:
-
-```text
-http://localhost:5001
-```
-
-Health check:
-
-```text
-http://localhost:5001/api/health
-```
-
----
-
-### 5. Start frontend
-
-Open a new terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend runs at:
-
-```text
-http://localhost:5173
+Vehicle Telemetry
+        |
+        v
+Backend API
+        |
+        |----> AI Service
+        |        |
+        |        v
+        |   Intent Prediction
+        |
+        |----> Risk Scoring Engine
+        |
+        |----> MongoDB
+        |        |
+        |        v
+        |   Experience Memory
+        |
+        |----> Neo4j
+        |        |
+        |        v
+        |   Graph Knowledge Memory
+        |
+        |----> Socket.IO
+                 |
+                 v
+          React Dashboard
 ```
 
 ---
 
 ## Environment Variables
 
-Create this file:
+Create a `.env` file inside the `backend` folder.
+
+Path:
 
 ```text
 backend/.env
@@ -372,95 +318,520 @@ NEO4J_PASSWORD=drivemind123
 
 ---
 
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/rags-git/DriveMind.git
+cd DriveMind
+```
+
+---
+
+### 2. Install Backend Dependencies
+
+```bash
+cd backend
+npm install
+cd ..
+```
+
+---
+
+### 3. Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+---
+
+### 4. Set Up AI Service
+
+```bash
+cd ai-service
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd ..
+```
+
+---
+
+## Running the Project
+
+DriveMind has four main services:
+
+1. MongoDB and Neo4j databases
+2. AI service
+3. Backend service
+4. Frontend dashboard
+
+Each service should be run in a separate terminal window.
+
+---
+
+## Quick Start Scripts
+
+DriveMind includes startup scripts for each service.
+
+### Start Databases
+
+```bash
+./scripts/start-databases.sh
+```
+
+This starts:
+
+- MongoDB on `localhost:27017`
+- Neo4j Browser on `http://localhost:7474`
+- Neo4j Bolt on `bolt://localhost:7687`
+
+---
+
+### Start AI Service
+
+```bash
+./scripts/start-ai-service.sh
+```
+
+AI service runs on:
+
+```text
+http://127.0.0.1:8000
+```
+
+---
+
+### Start Backend
+
+```bash
+./scripts/start-backend.sh
+```
+
+Backend runs on:
+
+```text
+http://localhost:5001
+```
+
+---
+
+### Start Frontend
+
+```bash
+./scripts/start-frontend.sh
+```
+
+Frontend runs on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## Manual Run Commands
+
+Use these commands if you do not want to use the scripts.
+
+### 1. Start Databases
+
+```bash
+docker compose up -d
+```
+
+---
+
+### 2. Start AI Service
+
+```bash
+cd ai-service
+source .venv/bin/activate
+uvicorn app.main:app --reload --port 8000
+```
+
+---
+
+### 3. Start Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+---
+
+### 4. Start Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+---
+
+## Docker Services
+
+The project uses Docker Compose for MongoDB and Neo4j.
+
+```yml
+services:
+  mongodb:
+    image: mongo:6.0.5
+    container_name: drivemind-telemetry-db
+    ports:
+      - "27017:27017"
+
+  neo4j:
+    image: neo4j:5
+    container_name: drivemind-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+```
+
+Neo4j login:
+
+```text
+Username: neo4j
+Password: drivemind123
+```
+
+---
+
 ## API Endpoints
 
-### Backend
+### Backend Health
 
 ```http
 GET /api/health
-POST /api/telemetry
-GET /api/experiences
-GET /api/experiences/road/:roadSegmentId
-GET /api/road-risk/:roadSegmentId
-GET /api/graph
 ```
 
-### AI Service
+Example:
+
+```bash
+curl http://localhost:5001/api/health
+```
+
+---
+
+### Send Vehicle Telemetry
+
+```http
+POST /api/telemetry
+```
+
+Example:
+
+```bash
+curl -X POST http://localhost:5001/api/telemetry \
+-H "Content-Type: application/json" \
+-d '{
+  "vehicleId": "vehicle_graph_01",
+  "roadSegmentId": "curve_42",
+  "speed": 78,
+  "acceleration": -1.9,
+  "brakePressure": 0.88,
+  "steeringAngle": 25,
+  "laneOffset": 0.5,
+  "distanceToFrontVehicle": 5,
+  "weather": "rain"
+}'
+```
+
+Expected result:
+
+```json
+{
+  "intentPrediction": {
+    "predictedIntent": "brake"
+  },
+  "risk": {
+    "riskLevel": "critical"
+  },
+  "experienceCreated": true,
+  "graphMemoryCreated": true
+}
+```
+
+---
+
+### Get Experiences
+
+```http
+GET /api/experiences
+```
+
+Example:
+
+```bash
+curl http://localhost:5001/api/experiences
+```
+
+---
+
+### Get Road Risk Summary
+
+```http
+GET /api/road-risk/:roadSegmentId
+```
+
+Example:
+
+```bash
+curl http://localhost:5001/api/road-risk/curve_42
+```
+
+---
+
+### Get Graph Overview
+
+```http
+GET /api/graph/overview
+```
+
+Example:
+
+```bash
+curl http://localhost:5001/api/graph/overview
+```
+
+---
+
+## AI Service Endpoints
+
+### AI Health
 
 ```http
 GET /health
+```
+
+Example:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+---
+
+### Predict Intent
+
+```http
 POST /predict-intent
 ```
 
----
+Example:
 
-## Current Data Note
-
-The current MVP AI model is trained on synthetic telemetry data.
-
-This is used for:
-
-- validating the ML pipeline
-- testing backend-AI integration
-- proving the end-to-end project flow
-
-For the final advanced version, the model should be upgraded using:
-
-1. CARLA-generated vehicle telemetry
-2. Real-world trajectory-derived features
-
-The project does not claim current synthetic model performance as real-world driving performance.
-
----
-
-## Model Result
-
-Current MVP model:
-
-```text
-Random Forest Classifier
-```
-
-Current synthetic dataset result:
-
-```text
-Accuracy: 98.40%
-Macro F1-score: 0.97
-Weighted F1-score: 0.98
+```bash
+curl -X POST http://127.0.0.1:8000/predict-intent \
+-H "Content-Type: application/json" \
+-d '{
+  "speed": 78,
+  "acceleration": -1.9,
+  "brakePressure": 0.88,
+  "steeringAngle": 25,
+  "laneOffset": 0.5,
+  "distanceToFrontVehicle": 5
+}'
 ```
 
 ---
 
-## Project Vision
+## Neo4j Graph Query
 
-DriveMind changes the connected vehicle question from:
+Open Neo4j Browser:
 
 ```text
-How do vehicles share data?
+http://localhost:7474
 ```
 
-to:
+Run:
 
-```text
-How do vehicles share knowledge and experience?
+```cypher
+MATCH (n)-[r]->(m)
+RETURN n, r, m
+LIMIT 50;
 ```
 
-The main innovation:
+This shows the collective vehicle memory graph.
+
+---
+
+## Example Graph Memory
+
+A risky event creates graph relationships like:
 
 ```text
-Vehicles share experience, not raw data.
+(vehicle_graph_01)-[:EXPERIENCED]->(Experience)
+(Experience)-[:AT]->(curve_42)
+(Experience)-[:DURING]->(rain)
+(Experience)-[:TYPE]->(high_risk_driving)
+(Experience)-[:SUGGESTS]->(Immediate braking or avoidance required)
 ```
 
 ---
 
-## Future Scope
+## Real-Time Events
 
-- CARLA simulation integration
-- Real-world trajectory dataset support
-- Better graph queries
-- Map-based vehicle visualization
-- Authentication for dashboard users
-- Dockerization of backend, frontend, and AI service
-- Cloud deployment
-- Advanced intent prediction models
-- Explainable graph-based recommendations
+DriveMind uses Socket.IO for real-time updates.
+
+### Event Name
+
+```text
+risk-alert
+```
+
+### Example Payload
+
+```json
+{
+  "vehicleId": "vehicle_graph_01",
+  "roadSegmentId": "curve_42",
+  "riskScore": 0.9,
+  "riskLevel": "critical",
+  "recommendedAction": "Immediate braking or avoidance required"
+}
+```
+
+---
+
+## Dashboard
+
+The dashboard is available at:
+
+```text
+http://localhost:5173
+```
+
+Dashboard sections:
+
+- Backend Health
+- Road Risk
+- Experience Count
+- Latest Risk Alert
+- Collective Memory Graph
+- Experience Memory
+- Simulated risky telemetry button
+
+---
+
+## Machine Learning Model
+
+The AI model is a Random Forest classifier.
+
+Input features:
+
+- Speed
+- Acceleration
+- Brake pressure
+- Steering angle
+- Lane offset
+- Distance to front vehicle
+
+Output:
+
+- Predicted vehicle intent
+
+Current intent labels:
+
+- keep_lane
+- brake
+- turn
+- change_lane
+
+The model is trained on synthetic data generated inside the project.
+
+Current training accuracy during testing:
+
+```text
+0.9840
+```
+
+This accuracy is only for synthetic test data and should not be treated as real-world performance.
+
+---
+
+## Current Limitations
+
+- The current telemetry data is simulated.
+- The AI model is trained on synthetic data.
+- The project does not yet use CARLA or real vehicle datasets.
+- Authentication is not added yet.
+- Full production deployment is not added yet.
+- Backend and AI service are not fully Dockerized yet.
+- The dashboard is a prototype interface.
+
+---
+
+## Future Improvements
+
+Planned improvements:
+
+- Add CARLA simulator integration
+- Use real-world trajectory datasets
+- Add map-based visualization
+- Add authentication
+- Add full Dockerization for backend, frontend, and AI service
+- Add CI/CD pipeline
+- Add more advanced graph queries
+- Add vehicle-to-vehicle recommendation simulation
+- Add anomaly detection
+- Add route risk prediction
+- Add cloud deployment
+
+---
+
+## Why This Project Is Useful
+
+DriveMind demonstrates how intelligent vehicles can move beyond isolated decision-making.
+
+Instead of each vehicle learning alone, vehicles can contribute to a shared memory system.
+
+This can help future vehicles:
+
+- Slow down before dangerous turns
+- Avoid high-risk road segments
+- React better during rain or fog
+- Learn from previous near-miss events
+- Improve safety using shared experience
+
+---
+
+## Hackathon Value
+
+DriveMind is useful as a hackathon project because it combines multiple strong technical areas:
+
+- Artificial Intelligence
+- Machine Learning
+- Intelligent Vehicles
+- Backend Engineering
+- Real-time Systems
+- Graph Databases
+- Full-stack Development
+- Docker-based infrastructure
+
+It is not just a normal dashboard project. It shows a complete intelligent system pipeline from telemetry input to AI prediction, risk analysis, memory storage, graph reasoning, and real-time visualization.
+
+---
+
+## Repository
+
+```text
+https://github.com/rags-git/DriveMind
+```
+
+---
+
+## Author
+
+**Raghav**
+
+---
+
+## License
+
+This project is currently created for educational and hackathon purposes.
